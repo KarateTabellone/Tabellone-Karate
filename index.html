@@ -17,7 +17,7 @@
     overflow: hidden;
   }
   
-  /* --- Avviso Rotazione Schermo (per smartphone in verticale) --- */
+  /* --- Avviso Rotazione Schermo --- */
   #portraitWarning {
     display: none;
     position: fixed;
@@ -43,10 +43,12 @@
     background: #111;
     padding: 10px 15px;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+    gap: 30px;
     border-bottom: 2px solid #333;
   }
+  
   .category-bar {
     background: #222;
     padding: 10px;
@@ -56,35 +58,7 @@
     gap: 15px;
     border-bottom: 2px solid #333;
   }
-  .timer-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .timer {
-    font-size: 5em;
-    font-weight: bold;
-    font-family: monospace;
-    background: #000;
-    padding: 5px 30px;
-    border-radius: 10px;
-    color: #ffeb3b;
-    min-width: 250px;
-    transition: color 0.3s ease;
-  }
-  .space-hint {
-    font-size: 0.8em;
-    color: #888;
-    margin-top: 5px;
-    font-weight: normal;
-  }
-  .status-banner {
-    font-size: 1.5em;
-    font-weight: bold;
-    height: 30px; 
-    margin-top: 5px;
-    text-transform: uppercase;
-  }
+
   .controls button {
     font-size: 1.1em;
     margin: 3px;
@@ -106,10 +80,14 @@
     background: #222;
     color: white;
   }
+
+  /* --- ZONA PUNTEGGI E TIMER CENTRALE --- */
   .scoreboard {
     display: flex;
     flex: 1;
+    justify-content: space-between;
   }
+  
   .side {
     flex: 1;
     padding: 15px;
@@ -122,14 +100,56 @@
   .aka { background-color: #d32f2f; }
   .ao { background-color: #1976d2; }
   
+  .center-board {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #151515;
+    padding: 0 20px;
+    min-width: 300px;
+    border-left: 3px solid #333;
+    border-right: 3px solid #333;
+    z-index: 10;
+  }
+
+  .timer {
+    font-size: 8vw;
+    font-weight: bold;
+    font-family: monospace;
+    background: #000;
+    padding: 10px 30px;
+    border-radius: 15px;
+    color: #ffeb3b;
+    transition: color 0.3s ease;
+    line-height: 1;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+  }
+  
+  .space-hint {
+    font-size: 1em;
+    color: #888;
+    margin-top: 15px;
+    font-weight: normal;
+  }
+  
+  .status-banner {
+    font-size: 2em;
+    font-weight: bold;
+    height: 40px; 
+    margin-top: 15px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
   .name-input {
-    font-size: 2.5em;
+    font-size: 3em;
     font-weight: bold;
     background: transparent;
     border: none;
     color: white;
     text-align: center;
-    width: 80%;
+    width: 90%;
     margin-bottom: 5px;
     border-bottom: 2px dashed rgba(255,255,255,0.4);
     font-family: inherit;
@@ -141,7 +161,7 @@
   }
 
   .score {
-    font-size: 8em;
+    font-size: 11vw;
     font-weight: bold;
     margin: 0;
     line-height: 1;
@@ -167,6 +187,7 @@
     color: white;
   }
   .point-btns button:hover { background: rgba(255, 255, 255, 0.4); }
+  
   .senshu-badge {
     font-size: 2em;
     color: #ffeb3b;
@@ -201,7 +222,7 @@
   
   .history-section {
     background: #222;
-    height: 20vh;
+    height: 15vh;
     padding: 10px 20px;
     overflow-y: auto;
     text-align: left;
@@ -217,28 +238,59 @@
     align-items: center;
   }
 
+  /* --- MODALITÀ DISPLAY (Finestra del Pubblico) --- */
+  body.display-mode .controls, 
+  body.display-mode .category-bar,
+  body.display-mode .top-bar,
+  body.display-mode .point-btns,
+  body.display-mode .history-section,
+  body.display-mode .space-hint,
+  body.display-mode #portraitWarning {
+      display: none !important;
+  }
+  body.display-mode .scoreboard {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+  }
+  body.display-mode .center-board {
+      border: none;
+      background: #111;
+  }
+  body.display-mode .name-input {
+      border-bottom: none;
+      pointer-events: none;
+      font-size: 5vw;
+  }
+  body.display-mode .score {
+      font-size: 18vw; 
+  }
+  body.display-mode .timer {
+      font-size: 12vw;
+  }
+
   /* --- DESIGN RESPONSIVE PER TELEFONI IN ORIZZONTALE --- */
   @media screen and (max-height: 600px), screen and (max-width: 900px) {
-    .timer { font-size: 3em; min-width: 150px; padding: 2px 10px; }
-    .score { font-size: 4em; }
-    .name-input { font-size: 1.2em; width: 90%; }
-    .top-bar, .category-bar { padding: 2px; }
-    .controls button { font-size: 0.85em; padding: 4px 8px; margin: 2px; }
+    .timer { font-size: 4.5em; padding: 5px 15px; }
+    .score { font-size: 5em; }
+    .name-input { font-size: 1.5em; width: 90%; }
+    .top-bar, .category-bar { padding: 5px; gap: 10px; }
+    .controls button { font-size: 0.85em; padding: 5px 10px; margin: 2px; }
     .controls input[type="number"] { font-size: 0.9em; padding: 4px; width: 45px; }
     .point-btns button { font-size: 0.85em; padding: 4px 8px; margin: 2px; }
-    .senshu-badge { font-size: 1em; margin-bottom: 2px; }
+    .senshu-badge { font-size: 1.2em; margin-bottom: 2px; }
     .penalty-box { width: 15px; height: 15px; border-width: 2px; }
     .side { padding: 5px; }
-    .history-section { height: 10vh; padding: 5px 10px; }
+    .center-board { padding: 0 10px; min-width: 180px; }
+    .history-section { height: 12vh; padding: 5px 10px; }
     .history-entry { padding: 5px; font-size: 0.8em; }
-    .status-banner { font-size: 1em; height: 20px; margin-top: 2px; }
-    .space-hint { display: none; } /* Nasconde la scritta spazio su telefoni */
+    .status-banner { font-size: 1.2em; height: 25px; margin-top: 5px; }
+    body:not(.display-mode) .space-hint { display: none; } 
   }
 </style>
 </head>
 <body>
 
-  <!-- Schermata di blocco per telefono in verticale -->
   <div id="portraitWarning">
     <div style="font-size: 4em; margin-bottom: 10px;">🔄</div>
     <h2>Ruota il dispositivo</h2>
@@ -249,46 +301,46 @@
   </div>
 
   <div class="main-content">
-    <!-- Barra Categorie -->
+    
+    <!-- Barra Categorie (Invisibile sul Display Pubblico) -->
     <div class="category-bar controls">
-      <button onclick="goFullscreen()" style="background: #4CAF50; font-weight: bold;">📱 Schermo Intero</button>
+      <button onclick="openDisplayWindow()" style="background: #E91E63; font-weight: bold; font-size: 1.2em;">🖥️ Apri Schermo Pubblico</button>
+      <span style="border-left: 2px solid #555; margin: 0 5px; height: 30px;"></span>
+      <button onclick="goFullscreen()" style="background: #4CAF50; font-weight: bold;">📱 Fullscreen</button>
       <span style="border-left: 2px solid #555; margin: 0 5px; height: 30px;"></span>
       <button onclick="setCategory(1, 30)" style="background: #2196F3;">U14 (1:30)</button>
       <button onclick="setCategory(2, 0)" style="background: #9C27B0;">Cad/Jun (2:00)</button>
       <button onclick="setCategory(3, 0)" style="background: #FF9800;">Seniores (3:00)</button>
-      <span style="border-left: 2px solid #555; margin: 0 5px; height: 30px;"></span>
-      <button onclick="resetNames()" style="background: #607D8B;">Reimposta Nomi</button>
     </div>
 
-    <!-- Barra Superiore: Timer e Controlli -->
+    <!-- Barra Controlli Principali -->
     <div class="top-bar controls">
       <div style="display: flex; align-items: center; gap: 5px;">
         <input type="number" id="minutesInput" value="3" min="0" title="Minuti"> m
         <input type="number" id="secondsInput" value="0" min="0" max="59" title="Secondi"> s
-        <button onclick="setTime()" style="margin-left: 5px;">Imposta</button>
-      </div>
-      
-      <div class="timer-container">
-        <div class="timer" id="timeDisplay">03:00,0</div>
-        <div class="space-hint">(Premi SPAZIO per Avviare/Pausare)</div>
-        <div class="status-banner" id="matchStatus"></div>
+        <button onclick="setTime()" style="margin-left: 5px; background: #1976d2;">Imposta Tempo</button>
       </div>
       
       <div>
-        <button onclick="toggleTimer()" id="startBtn">Avvia Tempo</button>
+        <button onclick="toggleTimer()" id="startBtn" style="background: #d84315; font-weight: bold;">Avvia Tempo</button>
         <button onclick="addTime(15)">+15s</button>
         <button onclick="addTime(1)">+1s</button>
         <button onclick="addTime(-1)">-1s</button>
+      </div>
+
+      <!-- Zona dei RESET raggruppata a destra -->
+      <div>
+        <button onclick="resetNames()" style="background: #607D8B;">Reset Nomi</button>
         <button onclick="resetPoints('both')" style="background: #666;">Azzera Punti</button>
-        <button onclick="resetMatch()">Reset Incontro</button>
+        <button onclick="resetMatch()" style="background: #b71c1c;">Reset Incontro</button>
       </div>
     </div>
 
-    <!-- Tabellone Punteggi -->
+    <!-- Tabellone (Diventa a tutto schermo in Modalità Display) -->
     <div class="scoreboard">
-      <!-- AKA (Rosso) -->
+      
       <div class="side aka">
-        <input type="text" class="name-input" id="akaName" value="AKA" placeholder="Nome Rosso">
+        <input type="text" class="name-input" id="akaName" value="AKA" placeholder="Nome Rosso" oninput="broadcastState()">
         <div class="senshu-badge" id="akaSenshu">SENSHU</div>
         <div class="score" id="akaScore">0</div>
         <div class="point-btns">
@@ -296,7 +348,7 @@
           <button onclick="updateScore('aka', 2)">WAZA-ARI (+2)</button>
           <button onclick="updateScore('aka', 3)">IPPON (+3)</button>
           <button onclick="updateScore('aka', -1)">-1 pt</button>
-          <button onclick="resetPoints('aka')" style="background: #b71c1c; font-size: 0.9em;">Reset Punti</button>
+          <button onclick="resetPoints('aka')" style="background: #9a0000; font-size: 0.9em;">Reset Punti</button>
         </div>
         <button class="controls" style="margin-top:10px; padding:8px 15px;" onclick="toggleSenshu('aka')">Assegna Senshu</button>
         
@@ -315,9 +367,15 @@
         </div>
       </div>
 
-      <!-- AO (Blu) -->
+      <!-- TIMER CENTRALE -->
+      <div class="center-board">
+        <div class="timer" id="timeDisplay">03:00,0</div>
+        <div class="status-banner" id="matchStatus"></div>
+        <div class="space-hint">(Premi SPAZIO per Avviare/Pausare)</div>
+      </div>
+
       <div class="side ao">
-        <input type="text" class="name-input" id="aoName" value="AO" placeholder="Nome Blu">
+        <input type="text" class="name-input" id="aoName" value="AO" placeholder="Nome Blu" oninput="broadcastState()">
         <div class="senshu-badge" id="aoSenshu">SENSHU</div>
         <div class="score" id="aoScore">0</div>
         <div class="point-btns">
@@ -325,7 +383,7 @@
           <button onclick="updateScore('ao', 2)">WAZA-ARI (+2)</button>
           <button onclick="updateScore('ao', 3)">IPPON (+3)</button>
           <button onclick="updateScore('ao', -1)">-1 pt</button>
-          <button onclick="resetPoints('ao')" style="background: #0d47a1; font-size: 0.9em;">Reset Punti</button>
+          <button onclick="resetPoints('ao')" style="background: #003c8f; font-size: 0.9em;">Reset Punti</button>
         </div>
         <button class="controls" style="margin-top:10px; padding:8px 15px;" onclick="toggleSenshu('ao')">Assegna Senshu</button>
         
@@ -343,6 +401,7 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- Storico e Salvataggio -->
@@ -357,6 +416,12 @@
   </div>
 
   <script>
+    // --- GESTIONE DUAL-SCREEN E SINCRONIZZAZIONE ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDisplayMode = urlParams.get('view') === 'display';
+    const bc = new BroadcastChannel('wkf_scoreboard_channel');
+    let displayWindow = null;
+
     // --- VARIABILI DI STATO ---
     let timeRemainingMs = 180000;
     let expectedEndTime = 0;
@@ -364,46 +429,122 @@
     let isRunning = false;
     let atoshiBarakuPlayed = false; 
     let audioCtx = null;
-    
     let scores = { aka: 0, ao: 0 };
     let penalties = { aka: 0, ao: 0 };
     let senshu = null;
 
     window.onload = function() {
-      renderHistory();
-      updateDisplay();
+      if (isDisplayMode) {
+        document.body.classList.add('display-mode');
+        bc.postMessage({ type: 'REQUEST_SYNC' });
+        
+        bc.onmessage = function(event) {
+          if (event.data.type === 'SYNC') {
+            updateDisplayFromSync(event.data);
+          }
+        };
+      } else {
+        renderHistory();
+        updateDisplay();
+        
+        bc.onmessage = function(event) {
+          if (event.data.type === 'REQUEST_SYNC') {
+            broadcastState();
+          }
+        };
+      }
     };
 
-    // --- FORZA SCHERMO INTERO E ROTAZIONE (API MOBILE) ---
+    // --- APERTURA SCHERMO PUBBLICO ---
+    function openDisplayWindow() {
+      if (!displayWindow || displayWindow.closed) {
+        displayWindow = window.open(window.location.pathname + '?view=display', 'WKF_Display', 'width=1000,height=700');
+        setTimeout(broadcastState, 500); 
+      } else {
+        displayWindow.focus(); 
+      }
+    }
+
+    // --- FUNZIONE DI INVIO DATI AL DISPLAY ---
+    function broadcastState() {
+      if (isDisplayMode) return; 
+      
+      bc.postMessage({
+        type: 'SYNC',
+        timeText: document.getElementById('timeDisplay').innerText,
+        timeColor: document.getElementById('timeDisplay').style.color,
+        akaName: document.getElementById('akaName').value,
+        aoName: document.getElementById('aoName').value,
+        akaScore: scores.aka,
+        aoScore: scores.ao,
+        akaSenshu: senshu === 'aka',
+        aoSenshu: senshu === 'ao',
+        akaPenalties: penalties.aka,
+        aoPenalties: penalties.ao,
+        statusText: document.getElementById('matchStatus').innerText,
+        statusColor: document.getElementById('matchStatus').style.color,
+        akaBlinking: document.getElementById('akaScore').classList.contains('blinking'),
+        aoBlinking: document.getElementById('aoScore').classList.contains('blinking')
+      });
+    }
+
+    // --- FUNZIONE DI RICEZIONE DATI SUL DISPLAY ---
+    function updateDisplayFromSync(data) {
+      document.getElementById('timeDisplay').innerText = data.timeText;
+      document.getElementById('timeDisplay').style.color = data.timeColor;
+      document.getElementById('akaName').value = data.akaName;
+      document.getElementById('aoName').value = data.aoName;
+      document.getElementById('akaScore').innerText = data.akaScore;
+      document.getElementById('aoScore').innerText = data.aoScore;
+      
+      document.getElementById('akaSenshu').classList.toggle('active', data.akaSenshu);
+      document.getElementById('aoSenshu').classList.toggle('active', data.aoSenshu);
+      
+      updatePenaltiesVisuals('aka', data.akaPenalties);
+      updatePenaltiesVisuals('ao', data.aoPenalties);
+      
+      document.getElementById('matchStatus').innerText = data.statusText;
+      document.getElementById('matchStatus').style.color = data.statusColor;
+      
+      document.getElementById('akaScore').classList.toggle('blinking', data.akaBlinking);
+      document.getElementById('aoScore').classList.toggle('blinking', data.aoBlinking);
+    }
+
+    function updatePenaltiesVisuals(player, penCount) {
+      let boxes = document.getElementById(player + 'Penalties').children;
+      for (let i = 0; i < 5; i++) {
+        boxes[i].classList.remove('filled', 'fatal');
+        if (i < penCount) {
+            if (i === 4) boxes[i].classList.add('fatal');
+            else boxes[i].classList.add('filled');
+        }
+      }
+    }
+
+    // --- FORZA SCHERMO INTERO E ROTAZIONE ---
     function goFullscreen() {
       let elem = document.documentElement;
-      
       if (elem.requestFullscreen) {
         elem.requestFullscreen().then(() => {
           if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock("landscape").catch((err) => {
-              console.log("Impossibile forzare la rotazione automaticamente:", err);
-            });
+            screen.orientation.lock("landscape").catch((err) => console.log(err));
           }
         }).catch(err => console.log(err));
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-      }
+      } else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
     }
 
     // --- CONTROLLO TASTIERA ---
     document.addEventListener('keydown', function(event) {
+      if (isDisplayMode) return; 
       if (event.target.tagName.toLowerCase() === 'input') return; 
-      
       if (event.code === 'Space' || event.key === ' ') {
         event.preventDefault(); 
         toggleTimer();
       }
     });
 
-    // --- FUNZIONI CATEGORIE, NOMI E RESET PUNTI ---
+    // --- LOGICA DEL TABELLONE ---
     function setCategory(minutes, seconds) {
       document.getElementById('minutesInput').value = minutes;
       document.getElementById('secondsInput').value = seconds;
@@ -413,6 +554,7 @@
     function resetNames() {
       document.getElementById('akaName').value = 'AKA';
       document.getElementById('aoName').value = 'AO';
+      broadcastState();
     }
 
     function resetPoints(target) {
@@ -424,14 +566,11 @@
         scores.ao = 0;
         document.getElementById('aoScore').innerText = 0;
       }
-      
       checkEndConditions();
-      if (timeRemainingMs <= 0 && !isRunning) {
-        showWinnerUI();
-      }
+      if (timeRemainingMs <= 0 && !isRunning) showWinnerUI();
+      broadcastState();
     }
 
-    // --- LOGICA VINCITORE E CONDIZIONI DI FINE ---
     function determineWinner() {
       if (penalties.aka >= 5) return 'ao';
       if (penalties.ao >= 5) return 'aka';
@@ -460,74 +599,58 @@
         statusDiv.style.color = "#64b5f6";
         document.getElementById('aoScore').classList.add('blinking');
       } else {
-        statusDiv.innerText = "⚖️ PAREGGIO (HANTEI)";
+        statusDiv.innerText = "⚖️ PAREGGIO";
         statusDiv.style.color = "#ffffff";
       }
+      broadcastState();
     }
 
     function clearWinnerUI() {
       document.getElementById('matchStatus').innerText = ""; 
       document.getElementById('akaScore').classList.remove('blinking');
       document.getElementById('aoScore').classList.remove('blinking');
+      broadcastState();
     }
 
     function checkEndConditions() {
       let gap = Math.abs(scores.aka - scores.ao);
       let hansoku = penalties.aka >= 5 || penalties.ao >= 5;
 
-      // Se c'è un divario di 8 punti o una penalità massima
       if (gap >= 8 || hansoku) {
-          if (isRunning) toggleTimer(); // Ferma il tempo automaticamente
+          if (isRunning) toggleTimer(); 
           showWinnerUI();
       } else if (timeRemainingMs > 0) {
-          // Se un arbitro corregge un punto e il gap scende sotto 8
           clearWinnerUI();
       }
     }
 
-    // --- MOTORE AUDIO ---
     function playSound(type) {
+      if (isDisplayMode) return;
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
         
         let osc = audioCtx.createOscillator();
         osc.connect(audioCtx.destination);
-        
-        if (type === '15s') {
-          osc.frequency.value = 600; 
-          osc.start();
-          setTimeout(() => osc.stop(), 400); 
-        } else if (type === 'end') {
-          osc.frequency.value = 800; 
-          osc.start();
-          setTimeout(() => osc.stop(), 1500); 
-        }
-      } catch(e) {
-        console.log("Audio non supportato o bloccato:", e);
-      }
+        if (type === '15s') { osc.frequency.value = 600; osc.start(); setTimeout(() => osc.stop(), 400); }
+        else if (type === 'end') { osc.frequency.value = 800; osc.start(); setTimeout(() => osc.stop(), 1500); }
+      } catch(e) {}
     }
 
-    // --- MOTORE TEMPO ---
     function updateDisplay() {
       if (timeRemainingMs < 0) timeRemainingMs = 0;
-      
       let totalSeconds = timeRemainingMs / 1000;
       let m = Math.floor(totalSeconds / 60);
       let s = Math.floor(totalSeconds % 60);
       let decimo = Math.floor((timeRemainingMs % 1000) / 100); 
-      
       let mStr = m < 10 ? '0' + m : m;
       let sStr = s < 10 ? '0' + s : s;
 
       let timerElement = document.getElementById('timeDisplay');
       timerElement.innerText = mStr + ':' + sStr + ',' + decimo;
-
-      if (timeRemainingMs <= 15000 && timeRemainingMs >= 0) {
-        timerElement.style.color = "#ff5252"; 
-      } else {
-        timerElement.style.color = "#ffeb3b"; 
-      }
+      timerElement.style.color = (timeRemainingMs <= 15000 && timeRemainingMs >= 0) ? "#ff5252" : "#ffeb3b"; 
+      
+      broadcastState(); 
     }
 
     function toggleTimer() {
@@ -537,11 +660,9 @@
       if (isRunning) {
         clearInterval(timerInterval);
         document.getElementById('startBtn').innerText = "Avvia Tempo";
-        document.getElementById('startBtn').style.background = "#333";
+        document.getElementById('startBtn').style.background = "#d84315";
       } else {
         if (timeRemainingMs <= 0) return;
-        
-        // Non far partire il tempo se c'è già una condizione di fine (es. gap 8 punti)
         let gap = Math.abs(scores.aka - scores.ao);
         let hansoku = penalties.aka >= 5 || penalties.ao >= 5;
         if (gap >= 8 || hansoku) return;
@@ -551,12 +672,10 @@
         
         timerInterval = setInterval(() => {
           timeRemainingMs = expectedEndTime - Date.now();
-          
           if (timeRemainingMs <= 15000 && !atoshiBarakuPlayed && timeRemainingMs > 0) {
             playSound('15s');
             atoshiBarakuPlayed = true;
           }
-
           if (timeRemainingMs <= 0) {
             timeRemainingMs = 0;
             clearInterval(timerInterval);
@@ -568,31 +687,21 @@
           }
           updateDisplay();
         }, 10);
-        
         document.getElementById('startBtn').innerText = "Pausa";
         document.getElementById('startBtn').style.background = "#d32f2f";
       }
       isRunning = !isRunning;
+      broadcastState();
     }
 
     function setTime() {
       let min = parseInt(document.getElementById('minutesInput').value);
       let sec = parseInt(document.getElementById('secondsInput').value);
-      
       if (isNaN(min) || min < 0) min = 0;
       if (isNaN(sec) || sec < 0) sec = 0;
-      
-      if (min === 0 && sec === 0) {
-          min = 3; 
-          document.getElementById('minutesInput').value = 3;
-      }
-
+      if (min === 0 && sec === 0) { min = 3; document.getElementById('minutesInput').value = 3; }
       timeRemainingMs = (min * 60000) + (sec * 1000);
-      
-      if (timeRemainingMs > 15000) {
-          atoshiBarakuPlayed = false;
-      }
-      
+      if (timeRemainingMs > 15000) atoshiBarakuPlayed = false;
       if (isRunning) toggleTimer();
       updateDisplay();
       checkEndConditions();
@@ -601,62 +710,39 @@
     function addTime(seconds) {
       timeRemainingMs += seconds * 1000;
       if (timeRemainingMs < 0) timeRemainingMs = 0;
-      
-      if (timeRemainingMs > 15000) {
-          atoshiBarakuPlayed = false;
-      }
-      
-      if (isRunning) {
-          expectedEndTime += seconds * 1000;
-      }
+      if (timeRemainingMs > 15000) atoshiBarakuPlayed = false;
+      if (isRunning) expectedEndTime += seconds * 1000;
       updateDisplay();
       checkEndConditions();
     }
 
-    // --- PUNTEGGI E PENALITÀ ---
     function updateScore(player, points) {
       scores[player] += points;
       if (scores[player] < 0) scores[player] = 0;
       document.getElementById(player + 'Score').innerText = scores[player];
-      
       checkEndConditions();
+      broadcastState();
     }
 
     function toggleSenshu(player) {
       document.getElementById('akaSenshu').classList.remove('active');
       document.getElementById('aoSenshu').classList.remove('active');
-      
-      if (senshu === player) {
-        senshu = null;
-      } else {
+      if (senshu === player) senshu = null;
+      else {
         senshu = player;
         document.getElementById(player + 'Senshu').classList.add('active');
       }
-      
-      if(timeRemainingMs <= 0 && !isRunning) {
-          showWinnerUI();
-      }
+      if(timeRemainingMs <= 0 && !isRunning) showWinnerUI();
+      broadcastState();
     }
 
     function changePenalty(player, delta) {
       penalties[player] += delta;
-      
       if (penalties[player] > 5) penalties[player] = 5;
       if (penalties[player] < 0) penalties[player] = 0;
-      
-      let boxes = document.getElementById(player + 'Penalties').children;
-      for (let i = 0; i < 5; i++) {
-        boxes[i].classList.remove('filled', 'fatal');
-        if (i < penalties[player]) {
-            if (i === 4) {
-                boxes[i].classList.add('fatal');
-            } else {
-                boxes[i].classList.add('filled');
-            }
-        }
-      }
-      
+      updatePenaltiesVisuals(player, penalties[player]);
       checkEndConditions();
+      broadcastState();
     }
 
     function resetMatch() {
@@ -665,47 +751,36 @@
       penalties = { aka: 0, ao: 0 };
       senshu = null;
       atoshiBarakuPlayed = false; 
-      
       document.getElementById('akaScore').innerText = 0;
       document.getElementById('aoScore').innerText = 0;
       document.getElementById('akaSenshu').classList.remove('active');
       document.getElementById('aoSenshu').classList.remove('active');
       clearWinnerUI();
-      
-      changePenalty('aka', 0);
-      changePenalty('ao', 0);
-      
+      updatePenaltiesVisuals('aka', 0);
+      updatePenaltiesVisuals('ao', 0);
       setTime(); 
+      document.getElementById('startBtn').innerText = "Avvia Tempo";
+      document.getElementById('startBtn').style.background = "#d84315";
+      broadcastState();
     }
 
-    // --- STORICO ---
     function saveMatch() {
       let history = JSON.parse(localStorage.getItem('karateHistory')) || [];
       let date = new Date().toLocaleString();
-      let senshuTextAka = senshu === 'aka' ? ' (Senshu)' : '';
-      let senshuTextAo = senshu === 'ao' ? ' (Senshu)' : '';
-      
-      let akaName = document.getElementById('akaName').value || 'AKA';
-      let aoName = document.getElementById('aoName').value || 'AO';
-      
       let winnerCode = determineWinner();
-      let winnerText = "";
-      if (winnerCode === 'aka') winnerText = "🏆 " + akaName;
-      else if (winnerCode === 'ao') winnerText = "🏆 " + aoName;
-      else winnerText = "⚖️ Pareggio";
+      let winnerText = (winnerCode === 'aka') ? "🏆 " + (document.getElementById('akaName').value || 'AKA') : 
+                       (winnerCode === 'ao') ? "🏆 " + (document.getElementById('aoName').value || 'AO') : "⚖️ Pareggio";
 
-      let matchData = {
+      history.push({
         date: date,
-        akaName: akaName,
-        aoName: aoName,
-        akaScore: scores.aka + senshuTextAka,
-        aoScore: scores.ao + senshuTextAo,
+        akaName: document.getElementById('akaName').value || 'AKA',
+        aoName: document.getElementById('aoName').value || 'AO',
+        akaScore: scores.aka + (senshu === 'aka' ? ' (Senshu)' : ''),
+        aoScore: scores.ao + (senshu === 'ao' ? ' (Senshu)' : ''),
         akaPenalties: penalties.aka,
         aoPenalties: penalties.ao,
         winnerInfo: winnerText
-      };
-      
-      history.push(matchData);
+      });
       localStorage.setItem('karateHistory', JSON.stringify(history));
       renderHistory();
       resetMatch();
@@ -715,12 +790,10 @@
       let history = JSON.parse(localStorage.getItem('karateHistory')) || [];
       let container = document.getElementById('historyEntries');
       container.innerHTML = '';
-      
       history.slice().reverse().forEach((match) => {
         if(!match) return;
         let div = document.createElement('div');
         div.className = 'history-entry';
-        
         div.innerHTML = `
           <div style="flex:1;">
             <span><strong>${match.date || ''}</strong></span><br>
