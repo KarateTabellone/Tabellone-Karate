@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tabellone Karate WKF & Torneo</title>
+<title>Tabellone Karate WKF & Torneo PRO</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -172,9 +172,13 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
   }
-  .blinking {
-    animation: blink 1s infinite;
+  .blinking { animation: blink 1s infinite; }
+  
+  @keyframes highlightAdvance {
+    0% { background-color: #4CAF50; color: #fff; }
+    100% { background-color: transparent; color: #fff; }
   }
+  .highlight-advance { animation: highlightAdvance 2s ease-out; }
 
   .point-btns button {
     font-size: 1.1em;
@@ -291,6 +295,11 @@
     margin: 10px 0;
     box-shadow: 0 4px 6px rgba(0,0,0,0.4);
     position: relative;
+    transition: border-color 0.3s;
+  }
+  .match-box.active-match {
+    border-color: #2196F3;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
   }
   .athlete-slot {
     display: flex;
@@ -321,22 +330,18 @@
     font-weight: bold;
     outline: none;
   }
+  /* Modificato in text per permettere di scrivere "-" (BYE) o "H" (Hantei) */
   .bracket-score {
-    width: 35px;
+    width: 45px;
     background: rgba(255,255,255,0.05);
     color: #ffeb3b;
     border: none;
     text-align: center;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.1em;
     padding: 8px;
     border-left: 2px solid #333;
     outline: none;
-  }
-  .bracket-score::-webkit-inner-spin-button,
-  .bracket-score::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
   .arbitra-btn {
     width: 100%;
@@ -352,17 +357,17 @@
   }
   .arbitra-btn:hover { background: #45a049; }
 
-  /* FINESTRA MODALE PER INSERIMENTO NOMI (Sorteggio) */
+  /* FINESTRE MODALI (Sorteggio & Vittoria) */
   .draw-modal {
     display: none; 
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.8); z-index: 3000; 
+    background: rgba(0,0,0,0.85); z-index: 3000; 
     justify-content: center; align-items: center;
   }
   .draw-modal-content {
     background: #222; padding: 25px; border-radius: 10px; border: 2px solid #2196F3;
     display: flex; flex-direction: column; gap: 15px; width: 450px; max-width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9);
   }
   .draw-textarea {
     width: 100%; height: 200px; background: #111; color: white;
@@ -378,7 +383,6 @@
   body.display-mode .history-section,
   body.display-mode .space-hint,
   body.display-mode .tournament-view,
-  body.display-mode .draw-modal,
   body.display-mode #portraitWarning {
       display: none !important;
   }
@@ -423,6 +427,7 @@
 
   <div class="main-content">
     
+    <!-- Barra Categorie -->
     <div class="category-bar controls">
       <button onclick="openDisplayWindow()" style="background: #E91E63; font-weight: bold; font-size: 1.2em;">🖥️ Schermo Pubblico</button>
       <button onclick="toggleTournament()" style="background: #FFC107; color: black; font-weight: bold; font-size: 1.2em;">🏆 Gestione Torneo</button>
@@ -432,6 +437,7 @@
       <button onclick="setCategory(3, 0)" style="background: #FF9800;">Seniores (3:00)</button>
     </div>
 
+    <!-- Barra Controlli Principali -->
     <div class="top-bar controls">
       <div style="display: flex; align-items: center; gap: 5px;">
         <input type="number" id="minutesInput" value="3" min="0" title="Minuti"> m
@@ -453,6 +459,7 @@
       </div>
     </div>
 
+    <!-- Tabellone -->
     <div class="scoreboard">
       <div class="side aka">
         <input type="text" class="name-input" id="akaName" value="AKA" placeholder="Nome Rosso" oninput="broadcastState()">
@@ -482,6 +489,7 @@
         </div>
       </div>
 
+      <!-- TIMER CENTRALE -->
       <div class="center-board">
         <div class="timer" id="timeDisplay">03:00,0</div>
         <div class="status-banner" id="matchStatus"></div>
@@ -517,9 +525,10 @@
       </div>
     </div>
 
+    <!-- Storico e Salvataggio -->
     <div class="top-bar controls" style="justify-content: center; background: #1a1a1a; padding: 5px;">
-      <button onclick="saveMatch()" style="background: #4CAF50; font-weight:bold;">Salva Risultato in Storico</button>
-      <button onclick="clearHistory()" style="background: #f44336;">Pulisci Storico</button>
+      <button onclick="saveMatch()" style="background: #4CAF50; font-weight:bold; font-size: 1.2em; padding: 12px 25px;">💾 SALVA RISULTATO E AVANZA</button>
+      <button onclick="clearHistory()" style="background: #f44336; margin-left:20px;">Pulisci Storico</button>
     </div>
     <div class="history-section" id="historyLog">
       <h3 style="margin-top:0; margin-bottom: 5px;">Storico Incontri</h3>
@@ -527,13 +536,14 @@
     </div>
   </div>
 
+  <!-- MODALITÀ GESTIONE TORNEO (Overlay) -->
   <div class="tournament-view" id="tournamentView">
     <div class="tournament-header controls">
       <div style="display: flex; align-items: center; gap: 20px;">
         <h1 style="margin: 0; color: #FFC107;">🏆 Struttura Torneo</h1>
         
         <button onclick="openDrawModal()" style="background: #2196F3; font-weight: bold; font-size: 1.1em; border:none; padding:8px 15px; border-radius:5px; color:white; cursor:pointer;">
-          🎲 Sorteggio Casuale
+          🎲 Sorteggio Casuale Automatico
         </button>
 
         <select id="tournamentCategorySelect" class="tournament-select">
@@ -547,20 +557,32 @@
       <button onclick="toggleTournament()" style="background: #f44336; font-weight: bold; font-size: 1.2em;">✖ Chiudi Torneo</button>
     </div>
     <div class="bracket-container" id="bracketContainer">
-      </div>
+      <!-- Generato in JS -->
+    </div>
   </div>
 
+  <!-- MODALE INSERIMENTO NOMI (Sorteggio) -->
   <div class="draw-modal" id="drawModal">
     <div class="draw-modal-content">
       <h2 style="margin: 0; color: #2196F3;">🎲 Sorteggio Casuale</h2>
       <p style="margin: 0; font-size: 0.95em; color: #ccc;">
-        Inserisci i nomi degli atleti <strong>(uno per riga)</strong>. L'algoritmo calcolerà i "BYE" automaticamente e promuoverà al turno successivo gli atleti dispari.
+        Inserisci i nomi degli atleti <strong>(uno per riga)</strong>. L'algoritmo mescolerà i nomi in modo casuale, inserirà i "BYE" e avvierà automaticamente il primo incontro.
       </p>
       <textarea id="drawNamesList" class="draw-textarea" placeholder="Mario Rossi&#10;Luigi Bianchi&#10;Giulia Verdi&#10;..."></textarea>
       <div style="display: flex; gap: 10px;">
-        <button onclick="applyRandomDraw()" style="flex: 1; background: #4CAF50; font-weight: bold; padding: 12px; border: none; border-radius: 5px; color: white; cursor: pointer;">Mescola e Posiziona</button>
+        <button onclick="applyRandomDraw()" style="flex: 1; background: #4CAF50; font-weight: bold; padding: 12px; border: none; border-radius: 5px; color: white; cursor: pointer;">MESCOLA ED INIZIA</button>
         <button onclick="closeDrawModal()" style="background: #f44336; font-weight: bold; padding: 12px; border: none; border-radius: 5px; color: white; cursor: pointer;">Annulla</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODALE VINCITORE TORNEO -->
+  <div class="draw-modal" id="winnerModal">
+    <div class="draw-modal-content" style="text-align: center; border-color: #FFD700; background: #111;">
+      <h1 style="font-size: 5em; margin: 0;">🥇</h1>
+      <h1 style="color: #FFD700; margin: 10px 0; text-transform: uppercase;">VINCITORE DEL TORNEO</h1>
+      <h2 id="tournamentWinnerText" style="font-size: 3em; color: white; margin: 10px 0;">NOME ATLETA</h2>
+      <button onclick="closeWinnerModal()" class="controls" style="background: #4CAF50; font-weight: bold; padding: 12px; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 1.2em; margin-top: 20px;">Termina Torneo</button>
     </div>
   </div>
 
@@ -581,6 +603,10 @@
     let scores = { aka: 0, ao: 0 };
     let penalties = { aka: 0, ao: 0 };
     let senshu = null;
+    
+    // Tracking Auto-Advance
+    let currentActiveMatchId = null;
+    let tournamentInProgress = false;
 
     window.onload = function() {
       if (isDisplayMode) {
@@ -624,23 +650,26 @@
         for(let i=0; i<numMatches; i++) {
           let box = document.createElement('div');
           box.className = 'match-box';
+          box.id = 'match_box_' + matchId;
           
           let akaId = 'tm_' + matchId + '_aka';
           let aoId = 'tm_' + matchId + '_ao';
+          let akaScoreId = 'tm_' + matchId + '_aka_score';
+          let aoScoreId = 'tm_' + matchId + '_ao_score';
           
           box.innerHTML = `
             <div style="font-size: 0.8em; color: #888; margin-bottom: 5px; text-transform: uppercase;">Incontro ${matchId}</div>
             <div class="athlete-slot aka" ondrop="drop(event)" ondragover="allowDrop(event)">
               <span class="drag-handle" draggable="true" ondragstart="drag(event)" title="Trascina l'atleta">☰</span>
               <input type="text" id="${akaId}" class="bracket-input" placeholder="Rosso (AKA)">
-              <input type="number" class="bracket-score" placeholder="-">
+              <input type="text" id="${akaScoreId}" class="bracket-score" placeholder="-">
             </div>
             <div class="athlete-slot ao" ondrop="drop(event)" ondragover="allowDrop(event)">
               <span class="drag-handle" draggable="true" ondragstart="drag(event)" title="Trascina l'atleta">☰</span>
               <input type="text" id="${aoId}" class="bracket-input" placeholder="Blu (AO)">
-              <input type="number" class="bracket-score" placeholder="-">
+              <input type="text" id="${aoScoreId}" class="bracket-score" placeholder="-">
             </div>
-            <button class="arbitra-btn" onclick="startMatchFromBracket('${akaId}', '${aoId}')">▶ Arbitra Nel Tabellone</button>
+            <button class="arbitra-btn" onclick="startMatchFromBracket('${akaId}', '${aoId}', ${matchId})">▶ Arbitra Nel Tabellone</button>
           `;
           col.appendChild(box);
           matchId++;
@@ -649,68 +678,56 @@
       });
     }
 
-    // --- ALGORITMO DI SORTEGGIO INTELLIGENTE CON GESTIONE "BYE" ---
-    function openDrawModal() {
-        document.getElementById('drawModal').style.display = 'flex';
-    }
-
-    function closeDrawModal() {
-        document.getElementById('drawModal').style.display = 'none';
-    }
+    // --- ALGORITMO SORTEGGIO E CALCOLO BYE ---
+    function openDrawModal() { document.getElementById('drawModal').style.display = 'flex'; }
+    function closeDrawModal() { document.getElementById('drawModal').style.display = 'none'; }
 
     function applyRandomDraw() {
         const text = document.getElementById('drawNamesList').value;
         let names = text.split('\n').map(n => n.trim()).filter(n => n !== '');
         
-        if(names.length === 0) {
-            alert("Inserisci almeno un nome per fare il sorteggio!");
-            return;
-        }
+        if(names.length === 0) { alert("Inserisci almeno un nome!"); return; }
         if(names.length > 16) {
-            alert("Hai inserito " + names.length + " nomi, ma il tabellone ospita fino a 16 atleti. Verranno estratti solo i primi 16.");
+            alert("Hai inserito " + names.length + " nomi. Il massimo è 16. Verranno estratti solo i primi 16.");
             names = names.slice(0, 16);
         }
 
-        // Shuffle Array (Algoritmo Fisher-Yates)
+        // Fisher-Yates Shuffle
         for (let i = names.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [names[i], names[j]] = [names[j], names[i]];
         }
 
-        // Pulisce l'intero tabellone da vecchi nomi e punteggi
+        // Reset completo tabellone
         for(let i=1; i<=15; i++) {
             let aka = document.getElementById('tm_' + i + '_aka');
             let ao = document.getElementById('tm_' + i + '_ao');
-            if(aka) { aka.value = ''; let s = aka.nextElementSibling; if(s) s.value = ''; }
-            if(ao) { ao.value = ''; let s = ao.nextElementSibling; if(s) s.value = ''; }
+            let akas = document.getElementById('tm_' + i + '_aka_score');
+            let aos = document.getElementById('tm_' + i + '_ao_score');
+            if(aka) aka.value = ''; if(ao) ao.value = '';
+            if(akas) akas.value = ''; if(aos) aos.value = '';
+            document.getElementById('match_box_' + i).classList.remove('active-match');
         }
 
         const N = names.length;
         let nameIdx = 0;
 
-        // Distribuzione Intelligente in base al numero di atleti
         if (N > 8) {
-            // Fino a 16 Atleti -> Lavoriamo sugli Ottavi (Match da 1 a 8)
-            let matchesPlayed = N - 8; // Es: 10 Atleti = 2 Incontri disputati
-            // Ordine di riempimento per bilanciare il tabellone visivamente
+            let matchesPlayed = N - 8; 
             let balanceOrder = [1, 8, 4, 5, 2, 7, 3, 6]; 
-            
             for(let i=0; i<8; i++) {
                 let matchId = balanceOrder[i];
                 if (i < matchesPlayed) {
-                    // Match con 2 atleti
                     document.getElementById('tm_'+matchId+'_aka').value = names[nameIdx++];
                     document.getElementById('tm_'+matchId+'_ao').value = names[nameIdx++];
                 } else {
-                    // Match con 1 atleta solo (BYE)
                     let byeAthlete = names[nameIdx++];
                     document.getElementById('tm_'+matchId+'_aka').value = byeAthlete;
                     document.getElementById('tm_'+matchId+'_ao').value = "--- BYE ---";
-                    advanceBye(byeAthlete, matchId); // Manda subito l'atleta ai quarti
+                    advanceBye(byeAthlete, matchId); 
                 }
             }
         } else if (N > 4) {
-            // Fino a 8 Atleti -> Lavoriamo sui Quarti (Match da 9 a 12)
             let matchesPlayed = N - 4;
             let balanceOrder = [9, 12, 10, 11];
             for(let i=0; i<4; i++) {
@@ -726,7 +743,6 @@
                 }
             }
         } else if (N > 2) {
-            // Fino a 4 Atleti -> Semifinali (Match 13 e 14)
             let matchesPlayed = N - 2;
             let balanceOrder = [13, 14];
             for(let i=0; i<2; i++) {
@@ -742,7 +758,6 @@
                 }
             }
         } else if (N === 2) {
-            // 2 Atleti -> Finale Secca (Match 15)
             document.getElementById('tm_15_aka').value = names[0];
             document.getElementById('tm_15_ao').value = names[1];
         } else if (N === 1) {
@@ -750,75 +765,149 @@
         }
 
         closeDrawModal();
+        tournamentInProgress = true;
+        
+        // Avvia magicamente il primo incontro pronto
+        setTimeout(loadNextReadyMatch, 500);
     }
 
-    // Funzione che sposta matematicamente l'atleta che ha ricevuto il BYE al prossimo turno
+    function getNextMatchSlot(currentMatchId) {
+        let mId = parseInt(currentMatchId);
+        let nextId = 0;
+        if (mId >= 1 && mId <= 8) nextId = Math.floor((mId - 1) / 2) + 9;
+        else if (mId >= 9 && mId <= 12) nextId = Math.floor((mId - 9) / 2) + 13;
+        else if (mId >= 13 && mId <= 14) nextId = 15;
+        else return null; 
+
+        let side = (mId % 2 !== 0) ? 'aka' : 'ao';
+        return { id: nextId, side: side };
+    }
+
     function advanceBye(athleteName, fromMatchId) {
-        let parentId = 0;
-        if (fromMatchId >= 1 && fromMatchId <= 8) {
-            parentId = Math.floor((fromMatchId - 1) / 2) + 9;
-        } else if (fromMatchId >= 9 && fromMatchId <= 12) {
-            parentId = Math.floor((fromMatchId - 9) / 2) + 13;
-        } else if (fromMatchId >= 13 && fromMatchId <= 14) {
-            parentId = 15;
-        } else {
-            return;
-        }
-        // Assegna rosso (aka) se l'ID match di provenienza è dispari, blu (ao) se è pari
-        let side = (fromMatchId % 2 !== 0) ? 'aka' : 'ao';
-        let targetEl = document.getElementById('tm_' + parentId + '_' + side);
-        if (targetEl) {
-            targetEl.value = athleteName;
+        // Marca l'incontro bypassato come 'concluso'
+        document.getElementById('tm_'+fromMatchId+'_aka_score').value = "-";
+        document.getElementById('tm_'+fromMatchId+'_ao_score').value = "-";
+        
+        let next = getNextMatchSlot(fromMatchId);
+        if (next) {
+            let targetEl = document.getElementById('tm_' + next.id + '_' + next.side);
+            if (targetEl) targetEl.value = athleteName;
         }
     }
 
-    // --- Trasferimento al tabellone e applicazione tempo categoria ---
-    function startMatchFromBracket(akaId, aoId) {
-      const akaName = document.getElementById(akaId).value || "AKA";
-      const aoName = document.getElementById(aoId).value || "AO";
+    // --- LOGICA AUTO-ADVANCE E SCELTA PROSSIMO INCONTRO ---
+    function advanceWinnerInBracket() {
+        if (!currentActiveMatchId) return;
+
+        let winnerCode = determineWinner();
+        let winnerName = "";
+        let akaFinalScore = scores.aka;
+        let aoFinalScore = scores.ao;
+
+        // Gestione Pareggio Arbitrale (Hantei)
+        if (winnerCode === 'tie') {
+            let tieBreaker = confirm("⚖️ Parità Assoluta (Hantei).\n\nPremi [OK] se gli arbitri dichiarano vincitore il ROSSO (AKA).\nPremi [ANNULLA] per il BLU (AO).");
+            if (tieBreaker) { winnerCode = 'aka'; akaFinalScore += " (H)"; } 
+            else { winnerCode = 'ao'; aoFinalScore += " (H)"; }
+        }
+
+        if (winnerCode === 'aka') winnerName = document.getElementById('akaName').value || 'AKA';
+        else if (winnerCode === 'ao') winnerName = document.getElementById('aoName').value || 'AO';
+
+        // Aggiorna la griglia torneo
+        let akaScoreInput = document.getElementById('tm_' + currentActiveMatchId + '_aka_score');
+        let aoScoreInput = document.getElementById('tm_' + currentActiveMatchId + '_ao_score');
+        if (akaScoreInput) akaScoreInput.value = akaFinalScore;
+        if (aoScoreInput) aoScoreInput.value = aoFinalScore;
+
+        // Se era la finale (match 15), proclama il vincitore
+        if (currentActiveMatchId === 15) {
+            showTournamentWinner(winnerName);
+        } else {
+            // Calcola e sposta il vincitore
+            let next = getNextMatchSlot(currentActiveMatchId);
+            if (next) {
+                let targetEl = document.getElementById('tm_' + next.id + '_' + next.side);
+                if (targetEl) {
+                    targetEl.value = winnerName;
+                    targetEl.classList.remove('highlight-advance');
+                    void targetEl.offsetWidth; 
+                    targetEl.classList.add('highlight-advance');
+                }
+            }
+        }
+
+        document.getElementById('match_box_' + currentActiveMatchId).classList.remove('active-match');
+        currentActiveMatchId = null;
+    }
+
+    // Cerca il prossimo incontro non giocato con entrambi i nomi validi
+    function loadNextReadyMatch() {
+        for(let i=1; i<=15; i++) {
+            let akaInput = document.getElementById('tm_' + i + '_aka');
+            let aoInput = document.getElementById('tm_' + i + '_ao');
+            let akaScore = document.getElementById('tm_' + i + '_aka_score');
+
+            let akaName = akaInput ? akaInput.value.trim() : '';
+            let aoName = aoInput ? aoInput.value.trim() : '';
+            let hasScore = akaScore && akaScore.value !== '';
+
+            // Se l'incontro ha entrambi gli atleti, non c'è il BYE, e non è stato ancora giocato (hasScore è falso)
+            if (akaName !== '' && aoName !== '' && 
+                !akaName.includes('BYE') && !aoName.includes('BYE') && 
+                !hasScore) {
+                
+                // Chiude la schermata torneo se è aperta
+                document.getElementById('tournamentView').style.display = 'none';
+                // Carica i dati nel tabellone senza aprire la visuale torneo
+                startMatchFromBracket(akaInput.id, aoInput.id, i, true);
+                return; // Ferma il ciclo
+            }
+        }
+    }
+
+    function showTournamentWinner(name, fromSync = false) {
+        tournamentInProgress = false;
+        document.getElementById('tournamentWinnerText').innerText = name;
+        document.getElementById('winnerModal').style.display = 'flex';
+        if(!fromSync) broadcastState();
+    }
+    
+    function closeWinnerModal(fromSync = false) {
+        document.getElementById('winnerModal').style.display = 'none';
+        if(!fromSync) broadcastState();
+    }
+
+    // --- CARICAMENTO NEL TABELLONE ---
+    function startMatchFromBracket(akaId, aoId, matchId, isAutoLoad = false) {
+      currentActiveMatchId = matchId;
+      tournamentInProgress = true;
       
-      document.getElementById('akaName').value = akaName;
-      document.getElementById('aoName').value = aoName;
+      document.querySelectorAll('.match-box').forEach(b => b.classList.remove('active-match'));
+      document.getElementById('match_box_' + matchId).classList.add('active-match');
+
+      document.getElementById('akaName').value = document.getElementById(akaId).value || "AKA";
+      document.getElementById('aoName').value = document.getElementById(aoId).value || "AO";
 
       const category = document.getElementById('tournamentCategorySelect').value;
-      if (category === 'u14') {
-        document.getElementById('minutesInput').value = 1;
-        document.getElementById('secondsInput').value = 30;
-      } else if (category === 'cadjun') {
-        document.getElementById('minutesInput').value = 2;
-        document.getElementById('secondsInput').value = 0;
-      } else if (category === 'seniores') {
-        document.getElementById('minutesInput').value = 3;
-        document.getElementById('secondsInput').value = 0;
-      }
+      if (category === 'u14') { document.getElementById('minutesInput').value = 1; document.getElementById('secondsInput').value = 30; } 
+      else if (category === 'cadjun') { document.getElementById('minutesInput').value = 2; document.getElementById('secondsInput').value = 0; } 
+      else if (category === 'seniores') { document.getElementById('minutesInput').value = 3; document.getElementById('secondsInput').value = 0; }
       
       resetMatch(); 
-      toggleTournament(); 
+      if (!isAutoLoad) toggleTournament(); 
     }
 
-    // --- Drag and Drop (Trascinamento Nomi) ---
+    // --- Drag and Drop ---
     function drag(ev) {
       const slot = ev.target.closest('.athlete-slot');
-      if (slot) {
-        const textInput = slot.querySelector('.bracket-input');
-        ev.dataTransfer.setData("text", textInput.value);
-      }
+      if (slot) { ev.dataTransfer.setData("text", slot.querySelector('.bracket-input').value); }
     }
-    
-    function allowDrop(ev) {
-      ev.preventDefault();
-    }
-    
+    function allowDrop(ev) { ev.preventDefault(); }
     function drop(ev) {
       ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
       const slot = ev.target.closest('.athlete-slot');
-      if (slot) {
-        const textInput = slot.querySelector('.bracket-input');
-        if (textInput) {
-            textInput.value = data;
-        }
-      }
+      if (slot) slot.querySelector('.bracket-input').value = ev.dataTransfer.getData("text");
     }
 
     // ==========================================
@@ -834,6 +923,9 @@
 
     function broadcastState() {
       if (isDisplayMode) return; 
+      
+      let isWinnerShowing = document.getElementById('winnerModal').style.display === 'flex';
+      
       bc.postMessage({
         type: 'SYNC',
         timeText: document.getElementById('timeDisplay').innerText,
@@ -849,7 +941,8 @@
         statusText: document.getElementById('matchStatus').innerText,
         statusColor: document.getElementById('matchStatus').style.color,
         akaBlinking: document.getElementById('akaScore').classList.contains('blinking'),
-        aoBlinking: document.getElementById('aoScore').classList.contains('blinking')
+        aoBlinking: document.getElementById('aoScore').classList.contains('blinking'),
+        tourWinner: isWinnerShowing ? document.getElementById('tournamentWinnerText').innerText : null
       });
     }
 
@@ -868,6 +961,9 @@
       document.getElementById('matchStatus').style.color = data.statusColor;
       document.getElementById('akaScore').classList.toggle('blinking', data.akaBlinking);
       document.getElementById('aoScore').classList.toggle('blinking', data.aoBlinking);
+      
+      if(data.tourWinner) showTournamentWinner(data.tourWinner, true);
+      else closeWinnerModal(true);
     }
 
     function updatePenaltiesVisuals(player, penCount) {
@@ -1112,6 +1208,10 @@
       let history = JSON.parse(localStorage.getItem('karateHistory')) || [];
       let date = new Date().toLocaleString();
       let winnerCode = determineWinner();
+      
+      // AUTO-ADVANCE LOGIC
+      advanceWinnerInBracket();
+
       let winnerText = (winnerCode === 'aka') ? "🏆 " + (document.getElementById('akaName').value || 'AKA') : 
                        (winnerCode === 'ao') ? "🏆 " + (document.getElementById('aoName').value || 'AO') : "⚖️ Pareggio";
 
@@ -1125,9 +1225,15 @@
         aoPenalties: penalties.ao,
         winnerInfo: winnerText
       });
+      
       localStorage.setItem('karateHistory', JSON.stringify(history));
       renderHistory();
       resetMatch();
+
+      // AUTO-LOAD NEXT MATCH (se il torneo non è finito)
+      if (tournamentInProgress) {
+          setTimeout(loadNextReadyMatch, 500); 
+      }
     }
 
     function renderHistory() {
